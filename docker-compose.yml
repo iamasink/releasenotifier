@@ -1,0 +1,14 @@
+---
+version: "3.9"
+
+services:
+    releasenotifier:
+      container_name: releasenotifier
+      volumes:
+        - /path/to/data:/data
+      build: .
+      environment:
+        - SONARRURL="http://sonarr.local:8989"
+        - APIKEY=abcd
+        - NOTIFYURL=https://discord.com/api/webhooks/example/example
+      restart: unless-stopped 

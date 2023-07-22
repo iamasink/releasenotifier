@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc -p ."
   },
-  "author": "",
+  "author": "iamasink",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.4.0"

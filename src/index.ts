@@ -9,6 +9,29 @@ const wanted = {
     qualities: []
 }
 
+const sonarrurl = process.env.SONARRURL + "/api/v3"
+const apikey = process.env.APIKEY
+const notifyUrl = process.env.NOTIFYURL
+
+
+console.log(`sonarrurl = ${sonarrurl}`)
+console.log(`apikey = ${apikey}`)
+console.log(`notifyUrl = ${notifyUrl}`)
+
+// check if all env variables are set
+if (sonarrurl === undefined) {
+    console.error("SONARRURL is not set")
+    process.exit(1)
+}
+if (apikey === undefined) {
+    console.error("APIKEY is not set")
+    process.exit(1)
+}
+if (notifyUrl === undefined) {
+    console.error("NOTIFYURL is not set")
+    process.exit(1)
+}
+
 /*
 get episode list every x minutes
 save all episodefiles to disk
@@ -26,22 +49,19 @@ async function getData() {
 
 
 
-    const url = "http://sonarr.local/api/v3"
-    const apikey = "047618e7d6f445089c224d565b652bf1"
-
-    const series: any[] = (await axios.get(`${url}/series?apikey=${apikey}`)).data
+    const series: any[] = (await axios.get(`${sonarrurl}/series?apikey=${apikey}`)).data
     const newepisodes: any[] = []
 
     // for all series, get all episodes, and for all episodes, get the episodefile.
     for (let i = 0, len = series.length; i < len; i++) {
         const serie = series[i]
         console.log(serie)
-        const episodes = (await axios.get(`${url}/episode?seriesId=${serie.id}&apikey=${apikey}`)).data
+        const episodes = (await axios.get(`${sonarrurl}/episode?seriesId=${serie.id}&apikey=${apikey}`)).data
         for (let i = 0, len = episodes.length; i < len; i++) {
             const episode = episodes[i]
             // console.log(episode)
             if (!episode.hasFile) continue
-            const episodefile = (await axios.get(`${url}/episodefile/${episode.episodeFileId}?apikey=${apikey}`)).data
+            const episodefile = (await axios.get(`${sonarrurl}/episodefile/${episode.episodeFileId}?apikey=${apikey}`)).data
             // console.log(episodefile)
             // if episodefile has wanted audio language, notify
             console.log(episodefile.mediaInfo.audioLanguages.split('/'))
@@ -110,8 +130,6 @@ async function getData() {
 
 async function notify(text: string) {
     const dryrun = false
-
-    const notifyUrl = "https://discord.com/api/webhooks/1102402497169068102/0VwDWWtQqH4s26ZufwmofecUMRYujTkvx2l-80T4T35Bz3e49mallloJv_pMX7Ve_9sI"
     const title = "New episode released!"
     const body = text
 
